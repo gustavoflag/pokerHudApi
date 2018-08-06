@@ -25,7 +25,7 @@ exports.inserir = function(newItem, name, res) {
     .then((item) => {
       return httpReturnHelper.success(res, `${name} incluído`, item);
     })
-    .catch((err) => httpReturnHelper.error(res, err));
+    .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
 };
 
 exports.alterar = function(model, id, body, name, res) {
