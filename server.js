@@ -9,7 +9,7 @@ var express = require('express'),
   Mao = require('./api/models/mao');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/pokerHudApi');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/pokerHudApi3');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

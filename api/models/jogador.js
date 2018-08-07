@@ -14,21 +14,21 @@ var JogadorSchema = new Schema({
     type: Number,
     default: 0
   },
-  preFlop:{
-    type:{
-      folds:{
-        type: Number,
-        default: 0
-      },
-      calls:{
-        type: Number,
-        default: 0
-      },
-      raises:{
-        type: Number,
-        default: 0
-      }
-    }
+  preFlopFolds:{
+    type: Number,
+    default: 0
+  },
+  preFlopCalls:{
+    type: Number,
+    default: 0
+  },
+  preFlopRaises:{
+    type: Number,
+    default: 0
+  },
+  preFlop3Bets:{
+    type: Number,
+    default: 0
   }
 });
 

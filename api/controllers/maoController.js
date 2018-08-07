@@ -7,13 +7,17 @@ var nomeItem = 'Mão';
 
 function consolidaAcaoPreFlop(jogador, acao){
   if (acao.indexOf("folds") != -1){
-    jogador.preFlop.folds++;
+    jogador.preFlopFolds++;
   } else if (acao.indexOf("calls") != -1){
-    jogador.preFlop.calls++;
+    jogador.preFlopCalls++;
   } else if (acao.indexOf("raises") != -1){
-    jogador.preFlop.raises++;
+    //if (!jaRaise){
+      jogador.preFlopRaises++;
+    //} else {
+    //  jogador.preFlop3Bets++;
+    //}
+    //return true;
   }
-  console.log(jogador);
 }
 
 exports.listar = function(req, res) {
@@ -31,27 +35,22 @@ exports.inserir = function(req, res) {
 
         var count = 0;
 
+        var jogadoresJaConsolidados = [];
+
         novaMao.preFlop.forEach((jogadorAcao) => {
+
           Jogador.findOne({ nome: jogadorAcao.nomeJogador })
             .then((jogadorExistente) => {
               if (!jogadorExistente){
 
                 var novoJogador = new Jogador({
-                  nome: jogadorAcao.nomeJogador,
-                  preFlop: { }
+                  nome: jogadorAcao.nomeJogador
                 });
 
-                novoJogador.maos++;
-                //consolidaAcaoPreFlop(novoJogador, jogadorAcao.acao);
+                jogadoresJaConsolidados.push(novoJogador.nome);
 
-                if (jogadorAcao.acao.indexOf("folds") != -1){
-                  novoJogador.preFlop.folds++;
-                } else if (jogadorAcao.acao.indexOf("calls") != -1){
-                  novoJogador.preFlop.calls++;
-                } else if (jogadorAcao.acao.indexOf("raises") != -1){
-                  novoJogador.preFlop.raises++;
-                }
-                console.log(novoJogador);
+                novoJogador.maos++;
+                consolidaAcaoPreFlop(novoJogador, jogadorAcao.acao);
 
                 novoJogador.save()
                   .then((jogador) => {
@@ -64,26 +63,26 @@ exports.inserir = function(req, res) {
 
               } else {
 
-                jogadorExistente.maos++;
-                //consolidaAcaoPreFlop(jogadorExistente, jogadorAcao.acao);
+                if (jogadoresJaConsolidados.indexOf(jogadorExistente.nome) == -1){
+                  jogadoresJaConsolidados.push(jogadorExistente.nome);
 
-                if (jogadorAcao.acao.indexOf("folds") != -1){
-                  jogadorExistente.preFlop.folds++;
-                } else if (jogadorAcao.acao.indexOf("calls") != -1){
-                  jogadorExistente.preFlop.calls++;
-                } else if (jogadorAcao.acao.indexOf("raises") != -1){
-                  jogadorExistente.preFlop.raises++;
+                  jogadorExistente.maos++;
+                  consolidaAcaoPreFlop(jogadorExistente, jogadorAcao.acao);
+
+                  jogadorExistente.save()
+                    .then((jogador) => {
+                      count++;
+                      if (count === novaMao.preFlop.length){
+                        return controller.inserir(novaMao, nomeItem, res);
+                      }
+                    })
+                    .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
+                } else {
+                  count++;
+                  if (count === novaMao.preFlop.length){
+                    return controller.inserir(novaMao, nomeItem, res);
+                  }
                 }
-                console.log(jogadorExistente);
-
-                jogadorExistente.save()
-                  .then((jogador) => {
-                    count++;
-                    if (count === novaMao.preFlop.length){
-                      return controller.inserir(novaMao, nomeItem, res);
-                    }
-                  })
-                  .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
               }
             })
             .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
