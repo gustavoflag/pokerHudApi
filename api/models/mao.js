@@ -14,7 +14,8 @@ var MaoSchema = new Schema({
   preFlop:{
     type:[{
       nomeJogador:{
-        type: String
+        type: String,
+        unique: false
       },
       acao:{
         type: String

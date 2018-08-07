@@ -5,18 +5,23 @@ var Mao = mongoose.model('Mao');
 var Jogador = mongoose.model('Jogador');
 var nomeItem = 'Mão';
 
-function consolidaAcaoPreFlop(jogador, acao){
+function consolidaAcaoPreFlop(jogador, acao, jaRaise){
+
+  console.log('jogador:', jogador.nome, ' acao:', acao, ' jaRaise:', jaRaise);
+
   if (acao.indexOf("folds") != -1){
     jogador.preFlopFolds++;
+    return false;
   } else if (acao.indexOf("calls") != -1){
     jogador.preFlopCalls++;
+    return false;
   } else if (acao.indexOf("raises") != -1){
-    //if (!jaRaise){
+    if (!jaRaise){
       jogador.preFlopRaises++;
-    //} else {
-    //  jogador.preFlop3Bets++;
-    //}
-    //return true;
+    } else {
+      jogador.preFlop3Bets++;
+    }
+    return true;
   }
 }
 
@@ -34,25 +39,36 @@ exports.inserir = function(req, res) {
       } else {
 
         var count = 0;
-
         var jogadoresJaConsolidados = [];
+        var jogadoresSalvar = [];
+        var jaRaise = false;
 
         novaMao.preFlop.forEach((jogadorAcao) => {
+          if (jogadoresJaConsolidados.indexOf(jogadorAcao.nomeJogador) == -1){
+            jogadoresJaConsolidados.push(jogadorAcao.nomeJogador);
+            /*
+            console.log('jogador:', jogadorAcao.nomeJogador);
+            console.log('acao:', jogadorAcao.acao);
+            */
 
+            var jogador = new Jogador({
+              nome: jogadorAcao.nomeJogador
+            });
+
+            jogador.maos++;
+            var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
+
+            jaRaise = jaRaise || jaRaiseLocal;
+
+            jogadoresSalvar.push(jogador);
+          }
+        });
+
+        jogadoresSalvar.forEach((jogador) => {
           Jogador.findOne({ nome: jogadorAcao.nomeJogador })
             .then((jogadorExistente) => {
               if (!jogadorExistente){
-
-                var novoJogador = new Jogador({
-                  nome: jogadorAcao.nomeJogador
-                });
-
-                jogadoresJaConsolidados.push(novoJogador.nome);
-
-                novoJogador.maos++;
-                consolidaAcaoPreFlop(novoJogador, jogadorAcao.acao);
-
-                novoJogador.save()
+                jogador.save()
                   .then((jogador) => {
                     count++;
                     if (count === novaMao.preFlop.length){
@@ -60,14 +76,47 @@ exports.inserir = function(req, res) {
                     }
                   })
                   .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-
               } else {
+                //jogadorExistente
+              }
+            }
+        });
 
-                if (jogadoresJaConsolidados.indexOf(jogadorExistente.nome) == -1){
-                  jogadoresJaConsolidados.push(jogadorExistente.nome);
+
+        //console.log(jogadoresSalvar);
+
+
+/*
+            Jogador.findOne({ nome: jogadorAcao.nomeJogador })
+              .then((jogadorExistente) => {
+                if (!jogadorExistente){
+
+                  console.log('inserindo novo jogador:', jogadorAcao.nomeJogador);
+                  console.log('acao:', jogadorAcao.acao);
+
+                  var novoJogador = new Jogador({
+                    nome: jogadorAcao.nomeJogador
+                  });
+
+                  novoJogador.maos++;
+                  jaRaise = jaRaise || consolidaAcaoPreFlop(novoJogador, jogadorAcao.acao, jaRaise);
+
+                  novoJogador.save()
+                    .then((jogador) => {
+                      count++;
+                      if (count === novaMao.preFlop.length){
+                        return controller.inserir(novaMao, nomeItem, res);
+                      }
+                    })
+                    .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
+
+                } else {
+
+                  console.log('alterando jogador:', jogadorAcao.nomeJogador);
+                  console.log('acao:', jogadorAcao.acao);
 
                   jogadorExistente.maos++;
-                  consolidaAcaoPreFlop(jogadorExistente, jogadorAcao.acao);
+                  jaRaise = jaRaise || consolidaAcaoPreFlop(jogadorExistente, jogadorAcao.acao, jaRaise);
 
                   jogadorExistente.save()
                     .then((jogador) => {
@@ -77,16 +126,16 @@ exports.inserir = function(req, res) {
                       }
                     })
                     .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-                } else {
-                  count++;
-                  if (count === novaMao.preFlop.length){
-                    return controller.inserir(novaMao, nomeItem, res);
-                  }
+
                 }
+              })
+              .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
+            } else {
+              count++;
+              if (count === novaMao.preFlop.length){
+                return controller.inserir(novaMao, nomeItem, res);
               }
-            })
-            .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-        });
+            }*/
       }
     })
     .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
