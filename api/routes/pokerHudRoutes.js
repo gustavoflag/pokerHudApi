@@ -20,4 +20,7 @@ module.exports = function(app) {
   app.route('/jogador')
     .get(usuarioController.loginRequerido, jogadorController.listar);
 
+  app.route('/jogador/agregar')
+    .post(usuarioController.loginRequerido, jogadorController.agregarDados);
+
 };

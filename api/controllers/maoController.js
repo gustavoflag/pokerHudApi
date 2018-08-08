@@ -6,9 +6,6 @@ var Jogador = mongoose.model('Jogador');
 var nomeItem = 'Mão';
 
 function consolidaAcaoPreFlop(jogador, acao, jaRaise){
-
-  console.log('jogador:', jogador.nome, ' acao:', acao, ' jaRaise:', jaRaise);
-
   if (acao.indexOf("folds") != -1){
     jogador.preFlopFolds++;
     return false;
@@ -25,6 +22,40 @@ function consolidaAcaoPreFlop(jogador, acao, jaRaise){
   }
 }
 
+function adicionaMao(jogadorExistente, jogador){
+  jogadorExistente.maos += jogador.maos;
+  jogadorExistente.preFlopFolds += jogador.preFlopFolds;
+  jogadorExistente.preFlopCalls += jogador.preFlopCalls;
+  jogadorExistente.preFlopRaises += jogador.preFlopRaises;
+  jogadorExistente.preFlop3Bets += jogador.preFlop3Bets;
+}
+
+function salvarJogadores(jogadores, novaMao, res){
+  var count = 0;
+
+  jogadores.forEach((jogador) => {
+    Jogador.findOne({ nome: jogador.nome })
+      .then((jogadorExistente) => {
+        if (!jogadorExistente){
+          jogadorExistente = new Jogador({
+            nome: jogador.nome
+          });
+        }
+        adicionaMao(jogadorExistente, jogador);
+
+        jogadorExistente.save()
+          .then((jogador) => {
+            count++;
+            if (count === jogadores.length){
+              return controller.inserir(novaMao, nomeItem, res);
+            }
+          })
+          .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
+      })
+      .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
+  });
+}
+
 exports.listar = function(req, res) {
   return controller.listar(Mao, res);
 };
@@ -38,7 +69,6 @@ exports.inserir = function(req, res) {
         return res.status(440).json({ message: `Mão já existente` });
       } else {
 
-        var count = 0;
         var jogadoresJaConsolidados = [];
         var jogadoresSalvar = [];
         var jaRaise = false;
@@ -46,10 +76,6 @@ exports.inserir = function(req, res) {
         novaMao.preFlop.forEach((jogadorAcao) => {
           if (jogadoresJaConsolidados.indexOf(jogadorAcao.nomeJogador) == -1){
             jogadoresJaConsolidados.push(jogadorAcao.nomeJogador);
-            /*
-            console.log('jogador:', jogadorAcao.nomeJogador);
-            console.log('acao:', jogadorAcao.acao);
-            */
 
             var jogador = new Jogador({
               nome: jogadorAcao.nomeJogador
@@ -57,85 +83,13 @@ exports.inserir = function(req, res) {
 
             jogador.maos++;
             var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
-
             jaRaise = jaRaise || jaRaiseLocal;
 
             jogadoresSalvar.push(jogador);
           }
         });
 
-        jogadoresSalvar.forEach((jogador) => {
-          Jogador.findOne({ nome: jogadorAcao.nomeJogador })
-            .then((jogadorExistente) => {
-              if (!jogadorExistente){
-                jogador.save()
-                  .then((jogador) => {
-                    count++;
-                    if (count === novaMao.preFlop.length){
-                      return controller.inserir(novaMao, nomeItem, res);
-                    }
-                  })
-                  .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-              } else {
-                //jogadorExistente
-              }
-            }
-        });
-
-
-        //console.log(jogadoresSalvar);
-
-
-/*
-            Jogador.findOne({ nome: jogadorAcao.nomeJogador })
-              .then((jogadorExistente) => {
-                if (!jogadorExistente){
-
-                  console.log('inserindo novo jogador:', jogadorAcao.nomeJogador);
-                  console.log('acao:', jogadorAcao.acao);
-
-                  var novoJogador = new Jogador({
-                    nome: jogadorAcao.nomeJogador
-                  });
-
-                  novoJogador.maos++;
-                  jaRaise = jaRaise || consolidaAcaoPreFlop(novoJogador, jogadorAcao.acao, jaRaise);
-
-                  novoJogador.save()
-                    .then((jogador) => {
-                      count++;
-                      if (count === novaMao.preFlop.length){
-                        return controller.inserir(novaMao, nomeItem, res);
-                      }
-                    })
-                    .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-
-                } else {
-
-                  console.log('alterando jogador:', jogadorAcao.nomeJogador);
-                  console.log('acao:', jogadorAcao.acao);
-
-                  jogadorExistente.maos++;
-                  jaRaise = jaRaise || consolidaAcaoPreFlop(jogadorExistente, jogadorAcao.acao, jaRaise);
-
-                  jogadorExistente.save()
-                    .then((jogador) => {
-                      count++;
-                      if (count === novaMao.preFlop.length){
-                        return controller.inserir(novaMao, nomeItem, res);
-                      }
-                    })
-                    .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-
-                }
-              })
-              .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-            } else {
-              count++;
-              if (count === novaMao.preFlop.length){
-                return controller.inserir(novaMao, nomeItem, res);
-              }
-            }*/
+        salvarJogadores(jogadoresSalvar, novaMao, res);
       }
     })
     .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
