@@ -29,6 +29,16 @@ var JogadorSchema = new Schema({
   preFlop3Bets:{
     type: Number,
     default: 0
+  },
+  estatisticas:{
+    type:{
+      pfr:{
+        type: Number
+      },
+      vpip:{
+        type: Number
+      }
+    }
   }
 });
 

@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var controller = require('./controllerBase');
+var jogadorController = require('./jogadorController');
 var httpReturnHelper = require('../helpers/httpReturnHelper');
 var Mao = mongoose.model('Mao');
 var Jogador = mongoose.model('Jogador');
@@ -22,40 +23,6 @@ function consolidaAcaoPreFlop(jogador, acao, jaRaise){
   }
 }
 
-function adicionaMao(jogadorExistente, jogador){
-  jogadorExistente.maos += jogador.maos;
-  jogadorExistente.preFlopFolds += jogador.preFlopFolds;
-  jogadorExistente.preFlopCalls += jogador.preFlopCalls;
-  jogadorExistente.preFlopRaises += jogador.preFlopRaises;
-  jogadorExistente.preFlop3Bets += jogador.preFlop3Bets;
-}
-
-function salvarJogadores(jogadores, novaMao, res){
-  var count = 0;
-
-  jogadores.forEach((jogador) => {
-    Jogador.findOne({ nome: jogador.nome })
-      .then((jogadorExistente) => {
-        if (!jogadorExistente){
-          jogadorExistente = new Jogador({
-            nome: jogador.nome
-          });
-        }
-        adicionaMao(jogadorExistente, jogador);
-
-        jogadorExistente.save()
-          .then((jogador) => {
-            count++;
-            if (count === jogadores.length){
-              return controller.inserir(novaMao, nomeItem, res);
-            }
-          })
-          .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-      })
-      .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
-  });
-}
-
 exports.listar = function(req, res) {
   return controller.listar(Mao, res);
 };
@@ -66,7 +33,7 @@ exports.inserir = function(req, res) {
   Mao.findOne({ idPokerstars: novaMao.idPokerstars })
     .then((maoExistente) => {
       if (maoExistente){
-        return res.status(440).json({ message: `Mão já existente` });
+        return httpReturnHelper.error(res, { message: `Mão já existente` });//res.status(440).json({ message: `Mão já existente` });
       } else {
 
         var jogadoresJaConsolidados = [];
@@ -89,7 +56,12 @@ exports.inserir = function(req, res) {
           }
         });
 
-        salvarJogadores(jogadoresSalvar, novaMao, res);
+        jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
+          if (err)
+            console.log(err);
+
+          return controller.inserir(novaMao, nomeItem, res);
+        });
       }
     })
     .catch((err) => console.log(err));// httpReturnHelper.error(res, err));

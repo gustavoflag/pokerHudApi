@@ -18,7 +18,11 @@ module.exports = function(app) {
     .post(usuarioController.loginRequerido, maoController.inserir);
 
   app.route('/jogador')
-    .get(usuarioController.loginRequerido, jogadorController.listar);
+    .get(usuarioController.loginRequerido, jogadorController.listar)
+    .post(usuarioController.loginRequerido, jogadorController.consultarVarios);
+
+  app.route('/jogador/:nome')
+    .get(usuarioController.loginRequerido, jogadorController.consultar);
 
   app.route('/jogador/agregar')
     .post(usuarioController.loginRequerido, jogadorController.agregarDados);
