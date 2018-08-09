@@ -30,6 +30,10 @@ var JogadorSchema = new Schema({
     type: Number,
     default: 0
   },
+  preFlopChecks:{
+    type: Number,
+    default: 0
+  },
   estatisticas:{
     type:{
       pfr:{

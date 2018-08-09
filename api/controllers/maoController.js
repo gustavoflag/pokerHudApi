@@ -13,6 +13,9 @@ function consolidaAcaoPreFlop(jogador, acao, jaRaise){
   } else if (acao.indexOf("calls") != -1){
     jogador.preFlopCalls++;
     return false;
+  } else if (acao.indexOf("checks") != -1){
+    jogador.preFlopChecks++;
+    return false;
   } else if (acao.indexOf("raises") != -1){
     if (!jaRaise){
       jogador.preFlopRaises++;
