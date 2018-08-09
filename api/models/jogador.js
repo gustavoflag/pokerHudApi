@@ -18,6 +18,18 @@ var JogadorSchema = new Schema({
     type: Number,
     default: 0
   },
+  preFlopFoldsBet:{
+    type: Number,
+    default: 0
+  },
+  preFlopLimps:{
+    type: Number,
+    default: 0
+  },
+  preFlopChecks:{
+    type: Number,
+    default: 0
+  },
   preFlopCalls:{
     type: Number,
     default: 0
@@ -26,20 +38,43 @@ var JogadorSchema = new Schema({
     type: Number,
     default: 0
   },
+  preFlopRaiseFolds:{
+    type: Number,
+    default: 0
+  },
+  preFlopRaiseCalls:{
+    type: Number,
+    default: 0
+  },
   preFlop3Bets:{
     type: Number,
     default: 0
   },
-  preFlopChecks:{
+  preFlop4Bets:{
     type: Number,
     default: 0
   },
   estatisticas:{
     type:{
-      pfr:{
+      vpip:{
         type: Number
       },
-      vpip:{
+      pfR:{
+        type: Number
+      },
+      pfCR:{
+        type: Number
+      },
+      pf3B:{
+        type: Number
+      },
+      pfF3B:{
+        type: Number
+      },
+      pf4B:{
+        type: Number
+      },
+      pfF4B:{
         type: Number
       }
     }

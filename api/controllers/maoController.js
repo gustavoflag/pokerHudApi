@@ -8,10 +8,32 @@ var nomeItem = 'Mão';
 
 function consolidaAcaoPreFlop(jogador, acao, jaRaise){
   if (acao.indexOf("folds") != -1){
-    jogador.preFlopFolds++;
+    if (!jaRaise){
+      jogador.preFlopFolds++;
+    } else {
+      if (jogador.preFlopRaises > 0 || jogador.preFlop3Bets > 0){
+        if (jogador.preFlopRaiseFolds == 0){
+            jogador.preFlopRaiseFolds++;
+        }
+      } else {
+        jogador.preFlopFoldsBet++;
+      }
+    }
     return false;
   } else if (acao.indexOf("calls") != -1){
-    jogador.preFlopCalls++;
+    if (!jaRaise){
+      jogador.preFlopLimps++;
+    } else {
+      if (jogador.preFlopRaises > 0 || jogador.preFlop3Bets > 0){
+        if (jogador.preFlopRaiseCalls == 0){
+          jogador.preFlopRaiseCalls++;
+        }
+      } else {
+        if (jogador.preFlopCalls == 0 && jogador.preFlopLimps == 0){
+          jogador.preFlopCalls++;
+        }
+      }
+    }
     return false;
   } else if (acao.indexOf("checks") != -1){
     jogador.preFlopChecks++;
@@ -20,7 +42,11 @@ function consolidaAcaoPreFlop(jogador, acao, jaRaise){
     if (!jaRaise){
       jogador.preFlopRaises++;
     } else {
-      jogador.preFlop3Bets++;
+      if (jogador.preFlopRaises > 0){
+        jogador.preFlop4Bets++;
+      } else {
+        jogador.preFlop3Bets++;
+      }
     }
     return true;
   }
@@ -39,25 +65,29 @@ exports.inserir = function(req, res) {
         return httpReturnHelper.error(res, { message: `Mão já existente` });//res.status(440).json({ message: `Mão já existente` });
       } else {
 
-        var jogadoresJaConsolidados = [];
+        //var jogadoresJaConsolidados = [];
         var jogadoresSalvar = [];
         var jaRaise = false;
 
         novaMao.preFlop.forEach((jogadorAcao) => {
-          if (jogadoresJaConsolidados.indexOf(jogadorAcao.nomeJogador) == -1){
-            jogadoresJaConsolidados.push(jogadorAcao.nomeJogador);
 
-            var jogador = new Jogador({
-              nome: jogadorAcao.nomeJogador
-            });
+            var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
 
-            jogador.maos++;
+            if (!jogador){
+              jogador = new Jogador({
+                nome: jogadorAcao.nomeJogador
+              });
+              jogador.maos++;
+
+              jogadoresSalvar.push(jogador);
+            }
+
             var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
             jaRaise = jaRaise || jaRaiseLocal;
 
-            jogadoresSalvar.push(jogador);
-          }
         });
+
+        //console.log(jogadoresSalvar);
 
         jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
           if (err)

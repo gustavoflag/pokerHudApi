@@ -6,16 +6,24 @@ var nomeItem = 'Jogador';
 
 function agregaMaos(jogadorExistente, jogador){
   jogadorExistente.maos += jogador.maos;
+
   jogadorExistente.preFlopFolds += jogador.preFlopFolds;
+  jogadorExistente.preFlopFoldsBet += jogador.preFlopFoldsBet;
+  jogadorExistente.preFlopLimps += jogador.preFlopLimps;
+  jogadorExistente.preFlopChecks += jogador.preFlopChecks;
   jogadorExistente.preFlopCalls += jogador.preFlopCalls;
   jogadorExistente.preFlopRaises += jogador.preFlopRaises;
+  jogadorExistente.preFlopRaiseFolds += jogador.preFlopRaiseFolds;
+  jogadorExistente.preFlopRaiseCalls += jogador.preFlopRaiseCalls;
   jogadorExistente.preFlop3Bets += jogador.preFlop3Bets;
+  jogadorExistente.preFlop4Bets += jogador.preFlop4Bets;
 }
 
 function calculaDadosEstatisticos(jogador){
   jogador.estatisticas = {
-    pfr: (((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos),
-    vpip: (((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls) * 100) / jogador.maos)
+    pfR: jogador.maos > 0 ? (((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos) : 0,
+    pfCR: (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets > 0) ? ((jogador.preFlopCalls * 100) / (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets)) : 0,
+    vpip: jogador.maos > 0 ? (((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls) * 100) / jogador.maos) : 0
   }
 }
 
@@ -73,7 +81,7 @@ exports.consultarVarios = function(req, res) {
       jogadores.forEach((jogador) => {
         calculaDadosEstatisticos(jogador);
       })
-      
+
       return res.json(jogadores);
     })
     .catch((err) => httpReturnHelper.error(res, err));
