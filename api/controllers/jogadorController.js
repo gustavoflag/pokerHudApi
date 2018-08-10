@@ -21,9 +21,10 @@ function agregaMaos(jogadorExistente, jogador){
 
 function calculaDadosEstatisticos(jogador){
   jogador.estatisticas = {
-    pfR: jogador.maos > 0 ? (((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos) : 0,
+    fs: (jogador.maos > 0) ? (((jogador.maos - jogadorExistente.preFlopFoldsBet - jogadorExistente.preFlopFolds - jogadorExistente.preFlopRaiseFold) * 100) / (jogador.maos)) : 0,
+    vpip: (jogador.maos > 0) ? (((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls) * 100) / jogador.maos) : 0,
+    pfR: (jogador.maos > 0) ? (((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos) : 0,
     pfCR: (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets > 0) ? ((jogador.preFlopCalls * 100) / (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets)) : 0,
-    vpip: jogador.maos > 0 ? (((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls) * 100) / jogador.maos) : 0,
     pf3B: (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets > 0) ? ((jogador.preFlop3Bets * 100) / (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets)) : 0
   }
 }

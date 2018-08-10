@@ -17,6 +17,9 @@ function consolidaAcaoPreFlop(jogador, acao, jaRaise){
         }
       } else {
         jogador.preFlopFoldsBet++;
+        if (jogador.preFlopCalls > 0){
+          jogador.preFlopCalls = 0;
+        }
       }
     }
     return false;
