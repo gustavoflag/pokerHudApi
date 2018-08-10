@@ -65,7 +65,6 @@ exports.inserir = function(req, res) {
         return httpReturnHelper.error(res, { message: `Mão já existente` });//res.status(440).json({ message: `Mão já existente` });
       } else {
 
-        //var jogadoresJaConsolidados = [];
         var jogadoresSalvar = [];
         var jaRaise = false;
 
