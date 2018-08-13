@@ -62,11 +62,17 @@ exports.listar = function(req, res) {
 exports.inserir = function(req, res) {
   var novaMao = new Mao(req.body);
 
+  console.log('body:', req.body);
+
   Mao.findOne({ idPokerstars: novaMao.idPokerstars })
     .then((maoExistente) => {
       if (maoExistente){
         return httpReturnHelper.error(res, { message: `Mão já existente` });//res.status(440).json({ message: `Mão já existente` });
       } else {
+
+        console.log('inserindo mão');
+
+        console.log(novaMao);
 
         var jogadoresSalvar = [];
         var jaRaise = false;
