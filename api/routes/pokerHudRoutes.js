@@ -5,7 +5,7 @@ module.exports = function(app) {
   var jogadorController = require('../controllers/jogadorController.js');
 
   app.route('/auth')
-    .get(/*usuarioController.loginRequerido, */usuarioController.listar);
+    .get(usuarioController.loginRequerido, usuarioController.listar);
 
   app.route('/auth/cadastrar')
     .post(usuarioController.inserir);
@@ -14,17 +14,17 @@ module.exports = function(app) {
     .post(usuarioController.login);
 
   app.route('/mao')
-    .get(/*usuarioController.loginRequerido, */maoController.listar)
-    .post(/*usuarioController.loginRequerido, */maoController.inserir);
+    .get(usuarioController.loginRequerido, maoController.listar)
+    .post(usuarioController.loginRequerido, maoController.inserir);
 
   app.route('/jogador')
-    .get(/*usuarioController.loginRequerido, */jogadorController.listar)
-    .post(/*usuarioController.loginRequerido, */jogadorController.consultarVarios);
+    .get(usuarioController.loginRequerido, jogadorController.listar)
+    .post(usuarioController.loginRequerido, jogadorController.consultarVarios);
 
   app.route('/jogador/:nome')
-    .get(/*usuarioController.loginRequerido, */jogadorController.consultar);
+    .get(usuarioController.loginRequerido, jogadorController.consultar);
 
   app.route('/jogador/agregar')
-    .post(/*usuarioController.loginRequerido, */jogadorController.agregarDados);
+    .post(usuarioController.loginRequerido, jogadorController.agregarDados);
 
 };
