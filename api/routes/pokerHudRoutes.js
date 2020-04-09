@@ -16,10 +16,16 @@ module.exports = function(app) {
   app.route('/mao')
     .get(usuarioController.loginRequerido, maoController.listar)
     .post(usuarioController.loginRequerido, maoController.inserir);
+  
+  app.route('/mao/:idPokerstars')
+    .get(usuarioController.loginRequerido, maoController.consultar);
 
   app.route('/jogador')
     .get(usuarioController.loginRequerido, jogadorController.listar)
     .post(usuarioController.loginRequerido, jogadorController.consultarVarios);
+
+  app.route('/todosJogadores')
+    .get(usuarioController.loginRequerido, jogadorController.consultarTodos)
 
   app.route('/jogador/:nome')
     .get(usuarioController.loginRequerido, jogadorController.consultar);

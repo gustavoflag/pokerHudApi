@@ -59,50 +59,77 @@ exports.listar = function(req, res) {
   return controller.listar(Mao, res);
 };
 
+exports.consultar = function(req, res) {
+  Mao.findOne({ idPokerstars: "#" + req.params.idPokerstars })
+    .then((mao) => {
+      if (!mao){
+        return httpReturnHelper.error(res, { message: `Mão não encontrada` });
+      }
+
+      return res.json(mao);
+    })
+    .catch((err) => {
+      res.status(440).json({error: err})
+    });
+};
+
 exports.inserir = function(req, res) {
   var novaMao = new Mao(req.body);
 
-  console.log('body:', req.body);
+  //console.log('body:', req.body);
 
   Mao.findOne({ idPokerstars: novaMao.idPokerstars })
     .then((maoExistente) => {
       if (maoExistente){
         return httpReturnHelper.error(res, { message: `Mão já existente` });//res.status(440).json({ message: `Mão já existente` });
       } else {
-
-        console.log('inserindo mão');
-
-        console.log(novaMao);
-
         var jogadoresSalvar = [];
         var jaRaise = false;
 
+        var jogadoresNaMao = [];
+
         novaMao.preFlop.forEach((jogadorAcao) => {
+          var jogadorJaNaMao = jogadoresNaMao.find(jogNaMao => jogNaMao == jogadorAcao.nomeJogador);
+          if (!jogadorJaNaMao){
+            jogadoresNaMao.push(jogadorAcao.nomeJogador);
+          }
 
-            var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+          var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
 
-            if (!jogador){
-              jogador = new Jogador({
-                nome: jogadorAcao.nomeJogador
-              });
-              jogador.maos++;
+          if (!jogador){
+            jogador = new Jogador({
+              nome: jogadorAcao.nomeJogador
+            });
+            jogador.maos++;
+          }
 
-              jogadoresSalvar.push(jogador);
-            }
+          jogadoresSalvar.push(jogador);
 
-            var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
-            jaRaise = jaRaise || jaRaiseLocal;
-
+          var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
+          jaRaise = jaRaise || jaRaiseLocal;
         });
 
+        console.log('jogadoresNaMao', jogadoresNaMao);
+
+        if (jogadoresNaMao.length < 5){
+          return httpReturnHelper.error(res, { message: `Mão com menos de 5 jogadores, não será importada` });//res.status(440).json({ message: `Mão já existente` });
+        } else {
+          jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
+            if (err){
+              return res.status(440).json({error: err});
+            } else {
+              novaMao.save()
+                .then((item) => {
+                  return res.json({ message: `Mão incluída`, obj: item });
+                })
+                .catch((err) => {
+                  console.log('MAO CONTROLLE ERROR', 105, err);
+                  return res.status(440).json({error: err});
+                });// httpReturnHelper.error(res, err));
+            }          
+          });
+        }
         //console.log(jogadoresSalvar);
-
-        jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
-          if (err)
-            console.log(err);
-
-          return controller.inserir(novaMao, nomeItem, res);
-        });
       }
     })
     .catch((err) => console.log(err));// httpReturnHelper.error(res, err));

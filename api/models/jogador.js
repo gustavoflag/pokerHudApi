@@ -56,6 +56,9 @@ var JogadorSchema = new Schema({
   },
   estatisticas:{
     type:{
+      fs:{
+        type: Number
+      },
       vpip:{
         type: Number
       },
@@ -76,6 +79,9 @@ var JogadorSchema = new Schema({
       },
       pfF4B:{
         type: Number
+      },
+      vpip_pfR:{
+        type: String
       }
     }
   }

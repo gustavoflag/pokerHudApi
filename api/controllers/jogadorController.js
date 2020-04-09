@@ -18,20 +18,35 @@ function agregaMaos(jogadorExistente, jogador){
   jogadorExistente.preFlop3Bets += jogador.preFlop3Bets;
   jogadorExistente.preFlop4Bets += jogador.preFlop4Bets;
 }
+/*
+"preFlopFolds": 4,
+        "preFlopFoldsBet": 5,
+        "preFlopLimps": 9,
+        "preFlopChecks": 2,
+        "preFlopCalls": 0,
+        "preFlopRaises": 2,
+
+*/
 
 function calculaDadosEstatisticos(jogador){
   jogador.estatisticas = {
-    fs: (jogador.maos > 0) ? (((jogador.maos - jogadorExistente.preFlopFoldsBet - jogadorExistente.preFlopFolds - jogadorExistente.preFlopRaiseFold) * 100) / (jogador.maos)) : 0,
-    vpip: (jogador.maos > 0) ? (((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls) * 100) / jogador.maos) : 0,
+    //fs: (jogador.maos > 0) ? (((jogador.maos - jogador.preFlopFoldsBet - jogador.preFlopFolds - jogador.preFlopRaiseFold) * 100) / (jogador.maos)) : 0,
+    vpip: (jogador.maos > 0) ? (((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls + jogador.preFlopLimps) * 100) / jogador.maos) : 0,
     pfR: (jogador.maos > 0) ? (((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos) : 0,
     pfCR: (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets > 0) ? ((jogador.preFlopCalls * 100) / (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets)) : 0,
     pf3B: (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets > 0) ? ((jogador.preFlop3Bets * 100) / (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets)) : 0
   }
+
+  jogador.estatisticas.vpip_pfR = jogador.estatisticas.vpip.toFixed(0).toString() + '/' 
+                                + jogador.estatisticas.pfR.toFixed(0).toString();
 }
 
 function agregarDadosJogadores(jogadores, callback){
   var count = 0;
+  jogadoresDentroMao = [];
   jogadores.forEach((jogador) => {
+    jogadoresDentroMao.push(jogador);
+
     Jogador.findOne({ nome: jogador.nome })
       .then((jogadorExistente) => {
         if (!jogadorExistente){
@@ -49,9 +64,15 @@ function agregarDadosJogadores(jogadores, callback){
                 callback(null, `Dados Agregados`);
             }
           })
-          .catch((err) => callback(err, null));// httpReturnHelper.error(res, err));
+          .catch((err) => {
+            console.log('JOGADOR CONTROLLE ERROR', 63, err);
+            callback(err, null)
+          });// httpReturnHelper.error(res, err));
       })
-      .catch((err) => callback(err, null));// httpReturnHelper.error(res, err));
+      .catch((err) => {
+        console.log('JOGADOR CONTROLLE ERROR', 68, err);
+        callback(err, null);
+      });// httpReturnHelper.error(res, err));
     });
 }
 
@@ -60,6 +81,7 @@ exports.listar = function(req, res) {
 };
 
 exports.consultar = function(req, res) {
+
   Jogador.findOne({ nome: req.params.nome })
     .then((jogador) => {
       if (!jogador){
@@ -70,7 +92,10 @@ exports.consultar = function(req, res) {
 
       return res.json(jogador);
     })
-    .catch((err) => httpReturnHelper.error(res, err));
+    .catch((err) => {
+      console.log('err', err);
+      res.status(440).json({error: err})
+    });
 };
 
 exports.consultarVarios = function(req, res) {
@@ -80,6 +105,18 @@ exports.consultarVarios = function(req, res) {
         return httpReturnHelper.error(res, { message: `Jogadores não encontrados` });
       }
 
+      jogadores.forEach((jogador) => {
+        calculaDadosEstatisticos(jogador);
+      })
+
+      return res.json(jogadores);
+    })
+    .catch((err) => httpReturnHelper.error(res, err));
+};
+
+exports.consultarTodos = function(req, res) {
+  Jogador.find({ })
+    .then((jogadores) => {
       jogadores.forEach((jogador) => {
         calculaDadosEstatisticos(jogador);
       })

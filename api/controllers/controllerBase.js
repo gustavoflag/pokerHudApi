@@ -34,7 +34,7 @@ exports.alterar = function(model, id, body, name, res) {
       if (!item){
         return res.json({ message: `${name} não encontrado` });
       }
-      return httpReturnHelper.success(res, `${name} alterado`, item);
+      //return httpReturnHelper.success(res, `${name} alterado`, item);
     })
     .catch((err) => httpReturnHelper.error(res, err));
 };
