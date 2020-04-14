@@ -4,7 +4,10 @@ var jogadorController = require('./jogadorController');
 var httpReturnHelper = require('../helpers/httpReturnHelper');
 var Mao = mongoose.model('Mao');
 var Jogador = mongoose.model('Jogador');
+
 var nomeItem = 'Mão';
+var maosPendentes = [];
+var emProcessamento = false;
 
 function consolidaAcaoPreFlop(jogador, acao, jaRaise){
   if (acao.indexOf("folds") != -1){
@@ -73,6 +76,67 @@ exports.consultar = function(req, res) {
     });
 };
 
+function processaMaosPendentes(){
+  emProcessamento = true;
+
+  var novaMao = maosPendentes[0];
+
+  var jogadoresSalvar = [];
+  var jaRaise = false;
+
+  var jogadoresNaMao = [];
+
+  console.log('processando mão:', novaMao.idPokerstars);
+
+  novaMao.preFlop.forEach((jogadorAcao) => {
+    var jogadorJaNaMao = jogadoresNaMao.find(jogNaMao => jogNaMao == jogadorAcao.nomeJogador);
+    if (!jogadorJaNaMao){
+      jogadoresNaMao.push(jogadorAcao.nomeJogador);
+    }
+
+    var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+
+    if (!jogador){
+      jogador = new Jogador({
+        nome: jogadorAcao.nomeJogador
+      });
+      jogador.maos++;
+    }
+
+    jogadoresSalvar.push(jogador);
+
+    var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
+    jaRaise = jaRaise || jaRaiseLocal;
+  });
+
+  //console.log('jogadoresNaMao', jogadoresNaMao);
+
+  if (jogadoresNaMao.length < 5){
+    console.log('Mão com menos de 5 jogadores, não será importada');
+    maosPendentes.splice(0, 1);
+    if (maosPendentes.length > 0){
+      processaMaosPendentes();
+    } else {
+      emProcessamento = false;
+    }
+  } else {
+    jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
+      if (err){
+        console.log('Erro ao processar', err);
+        emProcessamento = false;
+      } else {
+        maosPendentes.splice(0, 1);
+        if (maosPendentes.length > 0){
+          processaMaosPendentes();
+        } else {
+          emProcessamento = false;
+        }
+      }          
+    });
+  }
+  //console.log(jogadoresSalvar);
+}
+
 exports.inserir = function(req, res) {
   var novaMao = new Mao(req.body);
 
@@ -83,53 +147,18 @@ exports.inserir = function(req, res) {
       if (maoExistente){
         return httpReturnHelper.error(res, { message: `Mão já existente` });//res.status(440).json({ message: `Mão já existente` });
       } else {
-        var jogadoresSalvar = [];
-        var jaRaise = false;
-
-        var jogadoresNaMao = [];
-
-        novaMao.preFlop.forEach((jogadorAcao) => {
-          var jogadorJaNaMao = jogadoresNaMao.find(jogNaMao => jogNaMao == jogadorAcao.nomeJogador);
-          if (!jogadorJaNaMao){
-            jogadoresNaMao.push(jogadorAcao.nomeJogador);
-          }
-
-          var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
-
-          if (!jogador){
-            jogador = new Jogador({
-              nome: jogadorAcao.nomeJogador
-            });
-            jogador.maos++;
-          }
-
-          jogadoresSalvar.push(jogador);
-
-          var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
-          jaRaise = jaRaise || jaRaiseLocal;
-        });
-
-        console.log('jogadoresNaMao', jogadoresNaMao);
-
-        if (jogadoresNaMao.length < 5){
-          return httpReturnHelper.error(res, { message: `Mão com menos de 5 jogadores, não será importada` });//res.status(440).json({ message: `Mão já existente` });
-        } else {
-          jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
-            if (err){
-              return res.status(440).json({error: err});
-            } else {
-              novaMao.save()
-                .then((item) => {
-                  return res.json({ message: `Mão incluída`, obj: item });
-                })
-                .catch((err) => {
-                  console.log('MAO CONTROLLE ERROR', 105, err);
-                  return res.status(440).json({error: err});
-                });// httpReturnHelper.error(res, err));
-            }          
-          });
-        }
-        //console.log(jogadoresSalvar);
+        novaMao.save()
+          .then((item) => {
+            maosPendentes.push(item);
+            if (!emProcessamento){
+              processaMaosPendentes();
+            }
+            return res.json({ message: `Mão incluída`, obj: item });
+          })
+          .catch((err) => {
+            console.log('MAO CONTROLLE ERROR', 105, err);
+            return res.status(440).json({error: err});
+          });// httpReturnHelper.error(res, err));
       }
     })
     .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
