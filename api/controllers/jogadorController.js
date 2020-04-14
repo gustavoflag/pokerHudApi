@@ -43,9 +43,7 @@ function calculaDadosEstatisticos(jogador){
 
 function agregarDadosJogadores(jogadores, callback){
   var count = 0;
-  jogadoresDentroMao = [];
   jogadores.forEach((jogador) => {
-    jogadoresDentroMao.push(jogador);
 
     Jogador.findOne({ nome: jogador.nome })
       .then((jogadorExistente) => {

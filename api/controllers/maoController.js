@@ -84,82 +84,72 @@ function processaMaosPendentes(){
   var jogadoresSalvar = [];
   var jaRaise = false;
 
-  var jogadoresNaMao = [];
-
   console.log('processando mão:', novaMao.idPokerstars);
 
   novaMao.preFlop.forEach((jogadorAcao) => {
-    var jogadorJaNaMao = jogadoresNaMao.find(jogNaMao => jogNaMao == jogadorAcao.nomeJogador);
-    if (!jogadorJaNaMao){
-      jogadoresNaMao.push(jogadorAcao.nomeJogador);
-    }
-
     var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
-
     if (!jogador){
       jogador = new Jogador({
         nome: jogadorAcao.nomeJogador
       });
       jogador.maos++;
-    }
 
-    jogadoresSalvar.push(jogador);
+      jogadoresSalvar.push(jogador);
+    }   
 
     var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
     jaRaise = jaRaise || jaRaiseLocal;
   });
 
-  //console.log('jogadoresNaMao', jogadoresNaMao);
-
-  if (jogadoresNaMao.length < 5){
-    console.log('Mão com menos de 5 jogadores, não será importada');
-    maosPendentes.splice(0, 1);
-    if (maosPendentes.length > 0){
-      processaMaosPendentes();
-    } else {
+  jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
+    if (err){
+      console.log('Erro ao processar', err);
       emProcessamento = false;
-    }
-  } else {
-    jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
-      if (err){
-        console.log('Erro ao processar', err);
-        emProcessamento = false;
+    } else {
+      maosPendentes.splice(0, 1);
+      if (maosPendentes.length > 0){
+        processaMaosPendentes();
       } else {
-        maosPendentes.splice(0, 1);
-        if (maosPendentes.length > 0){
-          processaMaosPendentes();
-        } else {
-          emProcessamento = false;
-        }
-      }          
-    });
-  }
-  //console.log(jogadoresSalvar);
+        emProcessamento = false;
+      }
+    }          
+  });
 }
 
 exports.inserir = function(req, res) {
   var novaMao = new Mao(req.body);
 
-  //console.log('body:', req.body);
-
   Mao.findOne({ idPokerstars: novaMao.idPokerstars })
     .then((maoExistente) => {
       if (maoExistente){
-        return httpReturnHelper.error(res, { message: `Mão já existente` });//res.status(440).json({ message: `Mão já existente` });
+        return res.status(440).json({ message: `Mão já existente` });
       } else {
-        novaMao.save()
-          .then((item) => {
-            maosPendentes.push(item);
-            if (!emProcessamento){
-              processaMaosPendentes();
-            }
-            return res.json({ message: `Mão incluída`, obj: item });
-          })
-          .catch((err) => {
-            console.log('MAO CONTROLLE ERROR', 105, err);
-            return res.status(440).json({error: err});
-          });// httpReturnHelper.error(res, err));
-      }
+        var jogadoresSalvar = [];
+        novaMao.preFlop.forEach((jogadorAcao) => {
+          var jogador = jogadoresSalvar.find((jogador) => jogador == jogadorAcao.nomeJogador);
+          if (!jogador){
+            jogadoresSalvar.push(jogadorAcao.nomeJogador);
+          }
+        });
+
+        if (jogadoresSalvar.length < 5){
+          return res.status(440).json({ message: `Mão com menos de 5 jogadores, não será importada` });
+        } else {
+          novaMao.save()
+            .then((item) => {
+              maosPendentes.push(item);
+              if (!emProcessamento){
+                processaMaosPendentes();
+              }
+              return res.json({ message: `Mão incluída`, obj: item });
+            })
+            .catch((err) => {
+              return res.status(440).json({error: err});
+            }); 
+        }  
+      }  
     })
-    .catch((err) => console.log(err));// httpReturnHelper.error(res, err));
+    .catch((err) => { 
+      return res.status(440).json({error: err}) ;
+    });
 };
