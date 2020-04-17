@@ -21,6 +21,17 @@ var MaoSchema = new Schema({
         type: String
       }
     }]
+  },
+  flop:{
+    type:[{
+      nomeJogador:{
+        type: String,
+        unique: false
+      },
+      acao:{
+        type: String
+      }
+    }]
   }
 });
 

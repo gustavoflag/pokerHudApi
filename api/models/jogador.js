@@ -54,6 +54,52 @@ var JogadorSchema = new Schema({
     type: Number,
     default: 0
   },
+
+  flops:{
+    type: Number,
+    default: 0
+  },
+  flopBets:{
+    type: Number,
+    default: 0
+  },
+  flopCBets:{
+    type: Number,
+    default: 0
+  },
+  flopFolds:{
+    type: Number,
+    default: 0
+  },
+  flopCBetFolds:{
+    type: Number,
+    default: 0
+  },
+  flopCBetCalls:{
+    type: Number,
+    default: 0
+  },
+  flopCBetRaises:{
+    type: Number,
+    default: 0
+  },
+  flopChecks:{
+    type:Number,
+    default: 0
+  },
+  flopCheckRaises:{
+    type:Number,
+    default: 0
+  },
+  flopRaises:{
+    type:Number,
+    default: 0
+  },
+  flopCalls:{
+    type:Number,
+    default: 0
+  },
+
   estatisticas:{
     type:{
       fs:{
