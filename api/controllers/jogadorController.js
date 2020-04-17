@@ -113,7 +113,7 @@ exports.consultarVarios = function(req, res) {
 };
 
 exports.consultarTodos = function(req, res) {
-  Jogador.find({ }).collation({ locale: "en" }).sort({ nome: 1 })
+  Jogador.find({ maos: { $gt: 50 } }).collation({ locale: "en" }).sort({ nome: 1 })
     .then((jogadores) => {
       jogadores.forEach((jogador) => {
         calculaDadosEstatisticos(jogador);
