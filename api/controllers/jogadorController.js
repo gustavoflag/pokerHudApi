@@ -97,7 +97,7 @@ exports.consultar = function(req, res) {
 };
 
 exports.consultarVarios = function(req, res) {
-  Jogador.find({ nome: {$in: req.body} }).sort({ nome: 1 })
+  Jogador.find({ nome: {$in: req.body} }).collation({ locale: "en" }).sort({ nome: 1 })
     .then((jogadores) => {
       if (!jogadores){
         return httpReturnHelper.error(res, { message: `Jogadores não encontrados` });
@@ -113,7 +113,7 @@ exports.consultarVarios = function(req, res) {
 };
 
 exports.consultarTodos = function(req, res) {
-  Jogador.find({ }).sort({ nome: 1 })
+  Jogador.find({ }).collation({ locale: "en" }).sort({ nome: 1 })
     .then((jogadores) => {
       jogadores.forEach((jogador) => {
         calculaDadosEstatisticos(jogador);
