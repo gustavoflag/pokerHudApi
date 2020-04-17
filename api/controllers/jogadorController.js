@@ -18,24 +18,17 @@ function agregaMaos(jogadorExistente, jogador){
   jogadorExistente.preFlop3Bets += jogador.preFlop3Bets;
   jogadorExistente.preFlop4Bets += jogador.preFlop4Bets;
 }
-/*
-"preFlopFolds": 4,
-        "preFlopFoldsBet": 5,
-        "preFlopLimps": 9,
-        "preFlopChecks": 2,
-        "preFlopCalls": 0,
-        "preFlopRaises": 2,
-
-*/
 
 function calculaDadosEstatisticos(jogador){
-  jogador.estatisticas = {
-    //fs: (jogador.maos > 0) ? (((jogador.maos - jogador.preFlopFoldsBet - jogador.preFlopFolds - jogador.preFlopRaiseFold) * 100) / (jogador.maos)) : 0,
-    vpip: (jogador.maos > 0) ? (((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls + jogador.preFlopLimps) * 100) / jogador.maos) : 0,
-    pfR: (jogador.maos > 0) ? (((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos) : 0,
-    pfCR: (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets > 0) ? ((jogador.preFlopCalls * 100) / (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets)) : 0,
-    pf3B: (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets > 0) ? ((jogador.preFlop3Bets * 100) / (jogador.preFlopFoldsBet + jogador.preFlopCalls + jogador.preFlop3Bets)) : 0
+  if (jogador.maos > 0){
+    jogador.estatisticas = {
+      //fs: (jogador.maos > 0) ? (((jogador.maos - jogador.preFlopFoldsBet - jogador.preFlopFolds - jogador.preFlopRaiseFold) * 100) / (jogador.maos)) : 0,
+      vpip: ((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls + jogador.preFlopLimps) * 100) / jogador.maos,
+      pfR: ((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos,
+      pf3B: (jogador.preFlop3Bets * 100) / jogador.maos
+    }
   }
+  
 
   jogador.estatisticas.vpip_pfR = jogador.estatisticas.vpip.toFixed(0).toString() + '/' 
                                 + jogador.estatisticas.pfR.toFixed(0).toString();
