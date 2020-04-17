@@ -25,7 +25,8 @@ function calculaDadosEstatisticos(jogador){
       //fs: (jogador.maos > 0) ? (((jogador.maos - jogador.preFlopFoldsBet - jogador.preFlopFolds - jogador.preFlopRaiseFold) * 100) / (jogador.maos)) : 0,
       vpip: ((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls + jogador.preFlopLimps) * 100) / jogador.maos,
       pfR: ((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos,
-      pf3B: (jogador.preFlop3Bets * 100) / jogador.maos
+      pf3B: (jogador.preFlop3Bets * 100) / jogador.maos,
+      pfF3B: (jogador.preFlopRaiseFolds * 100) / jogador.maos
     }
   }
   
