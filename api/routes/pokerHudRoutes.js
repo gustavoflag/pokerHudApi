@@ -8,7 +8,7 @@ module.exports = function(app) {
     .get(usuarioController.loginRequerido, usuarioController.listar);
 
   app.route('/auth/cadastrar')
-    .post(usuarioController.inserir);
+    .post(usuarioController.loginRequerido, usuarioController.inserir);
 
   app.route('/auth/login')
     .post(usuarioController.login);
