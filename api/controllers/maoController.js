@@ -58,6 +58,41 @@ function consolidaAcaoPreFlop(jogador, acao, jaRaise){
   }
 }
 
+function consolidaAcaoFlop(jogador, acao, agressorPreFlop){
+  jogador.flops = 1;
+  if (acao.indexOf("bets") != -1){
+    jogador.flopBets++;
+
+    if (jogador == agressorPreFlop){ //CBet
+      jogador.flopCBets++;
+    } 
+  } else if (acao.indexOf("raises") != -1){
+    jogador.flopRaises = 1;
+    
+    if (agressorPreFlop && agressorPreFlop.flopRaises > 0){
+      jogador.flopCBetRaises = 1;
+    }
+
+    if (jogador.flopChecks > 0){
+      jogador.flopCheckRaises = 1;
+    } 
+  } else if (acao.indexOf("checks") != -1){
+    jogador.flopChecks++;
+  } else if (acao.indexOf("folds") != -1){
+    jogador.flopFolds++;
+
+    if (agressorPreFlop && agressorPreFlop.flopRaises > 0){
+      jogador.flopCBetFolds++;
+    }
+  } else if (acao.indexOf("calls") != -1){
+    jogador.flopCalls = 1;
+
+    if (agressorPreFlop && agressorPreFlop.flopRaises > 0){
+      jogador.flopCBetCalls = 1;
+    }
+  }
+}
+
 exports.listar = function(req, res) {
   return controller.listar(Mao, res);
 };
@@ -83,6 +118,7 @@ function processaMaosPendentes(){
 
   var jogadoresSalvar = [];
   var jaRaise = false;
+  var agressorPreFlop = null;
 
   console.log('processando mão:', novaMao.idPokerstars);
 
@@ -97,9 +133,24 @@ function processaMaosPendentes(){
       jogadoresSalvar.push(jogador);
     }   
 
-    var jaRaiseLocal = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
-    jaRaise = jaRaise || jaRaiseLocal;
+    var jogadorRaise = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
+    if (jogadorRaise){
+      agressorPreFlop = jogador;
+    }
+    jaRaise = jaRaise || jogadorRaise;
   });
+
+  //console.log('agressorPreFlop', agressorPreFlop._doc);
+
+  novaMao.flop.forEach((jogadorAcao) => {
+    var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+    consolidaAcaoFlop(jogador, jogadorAcao.acao, agressorPreFlop);
+  });
+
+  /*console.log('jogadoresSalvar');
+  jogadoresSalvar.forEach(jogSalvar => {
+    console.log(jogSalvar._doc);
+  });*/
 
   jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
     if (err){

@@ -7,6 +7,7 @@ var nomeItem = 'Jogador';
 function agregaMaos(jogadorExistente, jogador){
   jogadorExistente.maos += jogador.maos;
 
+  //Pre-Flop
   jogadorExistente.preFlopFolds += jogador.preFlopFolds;
   jogadorExistente.preFlopFoldsBet += jogador.preFlopFoldsBet;
   jogadorExistente.preFlopLimps += jogador.preFlopLimps;
@@ -17,6 +18,19 @@ function agregaMaos(jogadorExistente, jogador){
   jogadorExistente.preFlopRaiseCalls += jogador.preFlopRaiseCalls;
   jogadorExistente.preFlop3Bets += jogador.preFlop3Bets;
   jogadorExistente.preFlop4Bets += jogador.preFlop4Bets;
+
+  //Flop
+  jogadorExistente.flops += jogador.flops;
+  jogadorExistente.flopBets += jogador.flopBets;
+  jogadorExistente.flopRaises += jogador.flopRaises;
+  jogadorExistente.flopCBets += jogador.flopCBets;
+  jogadorExistente.flopCBetCalls += jogador.flopCBetCalls;
+  jogadorExistente.flopCBetRaises += jogador.flopCBetRaises;
+  jogadorExistente.flopFolds += jogador.flopFolds;
+  jogadorExistente.flopCBetFolds += jogador.flopCBetFolds;
+  jogadorExistente.flopChecks += jogador.flopChecks;
+  jogadorExistente.flopCheckRaises += jogador.flopCheckRaises;
+  jogadorExistente.flopCalls += jogador.flopCalls;
 }
 
 function calculaDadosEstatisticos(jogador){
