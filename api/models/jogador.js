@@ -91,6 +91,14 @@ var JogadorSchema = new Schema({
     type:Number,
     default: 0
   },
+  flopCheckCalls:{
+    type:Number,
+    default: 0
+  },
+  flopCheckFolds:{
+    type:Number,
+    default: 0
+  },
   flopRaises:{
     type:Number,
     default: 0
@@ -100,36 +108,82 @@ var JogadorSchema = new Schema({
     default: 0
   },
 
+  turns:{
+    type: Number,
+    default: 0
+  },
+  turnBets:{
+    type: Number,
+    default: 0
+  },
+  turnFolds:{
+    type: Number,
+    default: 0
+  },
+  turnRaises:{
+    type:Number,
+    default: 0
+  },
+  turnCalls:{
+    type:Number,
+    default: 0
+  },
+  turnChecks:{
+    type:Number,
+    default: 0
+  },
+  turnCheckRaises:{
+    type:Number,
+    default: 0
+  },
+  turnCheckCalls:{
+    type:Number,
+    default: 0
+  },
+  turnCheckFolds:{
+    type:Number,
+    default: 0
+  },
+
+
+  rivers:{
+    type: Number,
+    default: 0
+  },
+  riverBets:{
+    type: Number,
+    default: 0
+  },
+  riverFolds:{
+    type: Number,
+    default: 0
+  },
+  riverRaises:{
+    type:Number,
+    default: 0
+  },
+  riverCalls:{
+    type:Number,
+    default: 0
+  },
+  riverChecks:{
+    type:Number,
+    default: 0
+  },
+  riverCheckRaises:{
+    type:Number,
+    default: 0
+  },
+  riverCheckCalls:{
+    type:Number,
+    default: 0
+  },
+  riverCheckFolds:{
+    type:Number,
+    default: 0
+  },
+
   estatisticas:{
-    type:{
-      fs:{
-        type: Number
-      },
-      vpip:{
-        type: Number
-      },
-      pfR:{
-        type: Number
-      },
-      pfCR:{
-        type: Number
-      },
-      pf3B:{
-        type: Number
-      },
-      pfF3B:{
-        type: Number
-      },
-      pf4B:{
-        type: Number
-      },
-      pfF4B:{
-        type: Number
-      },
-      vpip_pfR:{
-        type: String
-      }
-    }
   }
 });
 

@@ -84,12 +84,74 @@ function consolidaAcaoFlop(jogador, acao, agressorPreFlop){
     if (agressorPreFlop && agressorPreFlop.flopRaises > 0){
       jogador.flopCBetFolds++;
     }
+
+    if (jogador.flopChecks > 0){
+      jogador.flopCheckFolds = 1;
+    } 
   } else if (acao.indexOf("calls") != -1){
     jogador.flopCalls = 1;
 
     if (agressorPreFlop && agressorPreFlop.flopRaises > 0){
       jogador.flopCBetCalls = 1;
     }
+
+    if (jogador.flopChecks > 0){
+      jogador.flopCheckCalls = 1;
+    } 
+  }
+}
+
+function consolidaAcaoTurn(jogador, acao){
+  jogador.turns = 1;
+  if (acao.indexOf("bets") != -1){
+    jogador.turnBets++;
+  } else if (acao.indexOf("raises") != -1){
+    jogador.turnRaises = 1;
+    
+    if (jogador.turnChecks > 0){
+      jogador.turnCheckRaises = 1;
+    } 
+  } else if (acao.indexOf("checks") != -1){
+    jogador.turnChecks++;
+  } else if (acao.indexOf("folds") != -1){
+    jogador.turnFolds++;
+    
+    if (jogador.turnChecks > 0){
+      jogador.turnCheckFolds = 1;
+    } 
+  } else if (acao.indexOf("calls") != -1){
+    jogador.turnCalls = 1;
+
+    if (jogador.turnChecks > 0){
+      jogador.turnCheckCalls = 1;
+    } 
+  }
+}
+
+function consolidaAcaoRiver(jogador, acao){
+  jogador.rivers = 1;
+  if (acao.indexOf("bets") != -1){
+    jogador.riverBets++;
+  } else if (acao.indexOf("raises") != -1){
+    jogador.riverRaises = 1;
+    
+    if (jogador.riverChecks > 0){
+      jogador.riverCheckRaises = 1;
+    } 
+  } else if (acao.indexOf("checks") != -1){
+    jogador.riverChecks++;
+  } else if (acao.indexOf("folds") != -1){
+    jogador.riverFolds++;
+
+    if (jogador.riverChecks > 0){
+      jogador.riverCheckFolds = 1;
+    } 
+  } else if (acao.indexOf("calls") != -1){
+    jogador.riverCalls = 1;
+
+    if (jogador.riverChecks > 0){
+      jogador.riverCheckCalls = 1;
+    } 
   }
 }
 
@@ -145,6 +207,16 @@ function processaMaosPendentes(){
   novaMao.flop.forEach((jogadorAcao) => {
     var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
     consolidaAcaoFlop(jogador, jogadorAcao.acao, agressorPreFlop);
+  });
+
+  novaMao.turn.forEach((jogadorAcao) => {
+    var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+    consolidaAcaoTurn(jogador, jogadorAcao.acao);
+  });
+
+  novaMao.river.forEach((jogadorAcao) => {
+    var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+    consolidaAcaoRiver(jogador, jogadorAcao.acao);
   });
 
   /*console.log('jogadoresSalvar');

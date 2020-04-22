@@ -30,7 +30,31 @@ function agregaMaos(jogadorExistente, jogador){
   jogadorExistente.flopCBetFolds += jogador.flopCBetFolds;
   jogadorExistente.flopChecks += jogador.flopChecks;
   jogadorExistente.flopCheckRaises += jogador.flopCheckRaises;
+  jogadorExistente.flopCheckCalls += jogador.flopCheckCalls;
+  jogadorExistente.flopCheckFolds += jogador.flopCheckFolds;
   jogadorExistente.flopCalls += jogador.flopCalls;
+
+  //Turn
+  jogadorExistente.turns += jogador.turns;
+  jogadorExistente.turnBets += jogador.turnBets;
+  jogadorExistente.turnFolds += jogador.turnFolds;
+  jogadorExistente.turnRaises += jogador.turnRaises;
+  jogadorExistente.turnCalls += jogador.turnCalls;
+  jogadorExistente.turnChecks += jogador.turnChecks;
+  jogadorExistente.turnCheckRaises += jogador.turnCheckRaises;
+  jogadorExistente.turnCheckCalls += jogador.turnCheckCalls;
+  jogadorExistente.turnCheckFolds += jogador.turnCheckFolds;
+
+  //River
+  jogadorExistente.rivers += jogador.rivers;
+  jogadorExistente.riverBets += jogador.riverBets;
+  jogadorExistente.riverFolds += jogador.riverFolds;
+  jogadorExistente.riverRaises += jogador.riverRaises;
+  jogadorExistente.riverCalls += jogador.riverCalls;
+  jogadorExistente.riverChecks += jogador.riverChecks;
+  jogadorExistente.riverCheckRaises += jogador.riverCheckRaises;
+  jogadorExistente.riverCheckCalls += jogador.riverCheckCalls;
+  jogadorExistente.riverCheckFolds += jogador.riverCheckFolds;
 }
 
 function calculaDadosEstatisticos(jogador){
@@ -40,7 +64,13 @@ function calculaDadosEstatisticos(jogador){
       vpip: ((jogador.preFlopRaises + jogador.preFlop3Bets + jogador.preFlopCalls + jogador.preFlopLimps) * 100) / jogador.maos,
       pfR: ((jogador.preFlopRaises + jogador.preFlop3Bets) * 100) / jogador.maos,
       pf3B: (jogador.preFlop3Bets * 100) / jogador.maos,
-      pfF3B: (jogador.preFlopRaiseFolds * 100) / (jogador.preFlopRaiseFolds + jogador.preFlopRaiseCalls + jogador.preFlop4Bets)
+      pfF3B: (jogador.preFlopRaiseFolds * 100) / (jogador.preFlopRaiseFolds + jogador.preFlopRaiseCalls + jogador.preFlop4Bets),
+      CR: ((jogador.flopCheckRaises + jogador.turnCheckRaises + jogador.riverCheckRaises) * 100
+            / (jogador.flopCheckRaises + jogador.flopCheckCalls + jogador.flopCheckFolds
+              + jogador.turnCheckRaises + jogador.turnCheckCalls + jogador.turnCheckFolds
+              + jogador.riverCheckRaises + jogador.riverCheckCalls + jogador.riverCheckFolds)),
+      CBet: ((jogador.flopCBets * 100) / (jogador.preFlopRaises - jogador.preFlopRaiseCalls - jogador.preFlopRaiseFolds + jogador.preFlop3Bets + jogador.preFlop4Bets)),
+      FCBet:((jogador.flopCBetFolds * 100 ) / (jogador.flopCBetCalls + jogador.flopCBetRaises + jogador.flopCBetFolds))
     }
   }
   

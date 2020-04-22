@@ -32,6 +32,28 @@ var MaoSchema = new Schema({
         type: String
       }
     }]
+  },
+  turn:{
+    type:[{
+      nomeJogador:{
+        type: String,
+        unique: false
+      },
+      acao:{
+        type: String
+      }
+    }]
+  },
+  river:{
+    type:[{
+      nomeJogador:{
+        type: String,
+        unique: false
+      },
+      acao:{
+        type: String
+      }
+    }]
   }
 });
 
