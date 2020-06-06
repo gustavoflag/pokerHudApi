@@ -31,7 +31,7 @@ module.exports = function(app) {
     .get(usuarioController.loginRequerido, jogadorController.consultar);
 
   app.route('/autocomplete/:nome')
-    .get(jogadorController.autoCompleteNome);
+    .get(usuarioController.loginRequerido, jogadorController.autoCompleteNome);
 
   app.route('/jogador/agregar')
     .post(usuarioController.loginRequerido, jogadorController.agregarDados);
