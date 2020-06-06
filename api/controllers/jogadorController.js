@@ -169,6 +169,22 @@ exports.agregarDados = function(req, res) {
 
     return httpReturnHelper.success(res, data, null);
   });
-}
+};
+
+exports.autoCompleteNome = function(req, res) {
+  var regex = new RegExp('^'+req.params.nome, 'i');
+  Jogador.find({nome: regex},  { 'nome': 1 }).limit(20)
+    .then((jogadores) => {
+      if (!jogadores){
+        return res.json([]);
+      }
+
+      return res.json(jogadores);
+    })
+    .catch((err) => {
+      console.log('err', err);
+      res.status(440).json({error: err})
+    });
+};
 
 exports.agregarDadosJogadores = agregarDadosJogadores;
