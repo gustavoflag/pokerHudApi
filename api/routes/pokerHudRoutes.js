@@ -25,7 +25,13 @@ module.exports = function(app) {
     .post(usuarioController.loginRequerido, jogadorController.consultarVarios);
 
   app.route('/todosJogadores')
-    .get(usuarioController.loginRequerido, jogadorController.consultarTodos)
+    .get(jogadorController.consultarTodos);
+  
+  app.route('/todosJogadores/:order')
+    .get(jogadorController.consultarTodos);
+
+  app.route('/todosJogadores/:order/:asc')
+    .get(jogadorController.consultarTodos);
 
   app.route('/jogador/:nome')
     .get(usuarioController.loginRequerido, jogadorController.consultar);

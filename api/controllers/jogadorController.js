@@ -155,12 +155,40 @@ exports.consultarTodos = function(req, res) {
     .then((jogadores) => {
       jogadores.forEach((jogador) => {
         calculaDadosEstatisticos(jogador);
-      })
+      });
+
+      if (req.params && req.params.order){
+        let isAsc = true;
+        if (req.params.asc){
+          isAsc = req.params.asc;
+        }
+        jogadores = sort(jogadores, req.params.order, isAsc);
+      }
 
       return res.json(jogadores);
     })
     .catch((err) => httpReturnHelper.error(res, err));
 };
+
+function sort(jogadores, campo, isAsc){
+  return jogadores.sort((a, b)=>{
+    switch (campo) {
+      case 'vpip': return compare(a.estatisticas.vpip, b.estatisticas.vpip, isAsc);
+      case 'pfR': return compare(a.estatisticas.pfR, b.estatisticas.pfR, isAsc);
+      case 'pf3B': return compare(a.estatisticas.pf3B, b.estatisticas.pf3B, isAsc);
+      case 'pfF3B': return compare(a.estatisticas.pfF3B, b.estatisticas.pfF3B, isAsc);
+      case 'CR': return compare(a.estatisticas.CR, b.estatisticas.CR, isAsc);
+      case 'CBet': return compare(a.estatisticas.CBet, b.estatisticas.CBet, isAsc);
+      case 'FCBet': return compare(a.estatisticas.FCBet, b.estatisticas.FCBet, isAsc);
+      default: return 0;
+    }
+  });
+  
+}
+
+function compare(a, b, isAsc) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+}
 
 exports.agregarDados = function(req, res) {
   agregarDadosJogadores(req.body, (err, data) => {

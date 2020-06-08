@@ -9,8 +9,8 @@ var express = require('express'),
   Mao = require('./api/models/mao');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pokerHudApi', { useNewUrlParser: true }); //LOCAL
-//mongoose.connect(process.env.MONGODB_URI || 'mongodb://heroku_nwr6gcbj:lij4u0eb5r67oqgqn999irmaek@ds239206.mlab.com:39206/heroku_nwr6gcbj', { useNewUrlParser: true }); //TQSOP-STATS
+//mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pokerHudApi', { useNewUrlParser: true }); //LOCAL
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://heroku_nwr6gcbj:lij4u0eb5r67oqgqn999irmaek@ds239206.mlab.com:39206/heroku_nwr6gcbj', { useNewUrlParser: true }); //TQSOP-STATS
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
