@@ -160,7 +160,7 @@ exports.consultarTodos = function(req, res) {
       if (req.params && req.params.order){
         let isAsc = false;
         if (req.params.asc){
-          isAsc = req.params.asc == 'true';
+          isAsc = req.params.asc == 'true' || req.params.asc == '1';
         }
         jogadores = sort(jogadores, req.params.order, isAsc);
       }
