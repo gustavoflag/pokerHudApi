@@ -158,9 +158,9 @@ exports.consultarTodos = function(req, res) {
       });
 
       if (req.params && req.params.order){
-        let isAsc = true;
+        let isAsc = false;
         if (req.params.asc){
-          isAsc = req.params.asc;
+          isAsc = req.params.asc == 'true';
         }
         jogadores = sort(jogadores, req.params.order, isAsc);
       }
