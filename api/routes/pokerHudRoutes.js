@@ -25,13 +25,13 @@ module.exports = function(app) {
     .post(usuarioController.loginRequerido, jogadorController.consultarVarios);
 
   app.route('/todosJogadores')
-    .get(jogadorController.consultarTodos);
+    .get(usuarioController.loginRequerido, jogadorController.consultarTodos);
   
   app.route('/todosJogadores/:order')
-    .get(jogadorController.consultarTodos);
+    .get(usuarioController.loginRequerido, jogadorController.consultarTodos);
 
   app.route('/todosJogadores/:order/:asc')
-    .get(jogadorController.consultarTodos);
+    .get(usuarioController.loginRequerido, jogadorController.consultarTodos);
 
   app.route('/jogador/:nome')
     .get(usuarioController.loginRequerido, jogadorController.consultar);
