@@ -6,7 +6,8 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   Usuario = require('./api/models/usuario'),
   Jogador = require('./api/models/jogador'),
-  Mao = require('./api/models/mao');
+  Mao = require('./api/models/mao'),
+  Torneio = require('./api/models/torneio');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pokerHudApi', { useNewUrlParser: true }); //LOCAL

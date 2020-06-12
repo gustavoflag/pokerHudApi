@@ -3,6 +3,7 @@ module.exports = function(app) {
   var usuarioController = require('../controllers/usuarioController.js');
   var maoController = require('../controllers/maoController.js');
   var jogadorController = require('../controllers/jogadorController.js');
+  var torneioController = require('../controllers/torneioController.js');
 
   app.route('/auth')
     .get(usuarioController.loginRequerido, usuarioController.listar);
@@ -12,6 +13,13 @@ module.exports = function(app) {
 
   app.route('/auth/login')
     .post(usuarioController.login);
+
+  app.route('/torneio')
+    .post(torneioController.inserir);
+
+  app.route('/torneio/:idTorneio')
+    .get(torneioController.consultar)
+    .patch(torneioController.inserirMao);
 
   app.route('/mao')
     .get(usuarioController.loginRequerido, maoController.listar)
