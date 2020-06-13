@@ -21,7 +21,11 @@ var TorneioSchema = new Schema({
         },
         linhas:[{
             type: String
-        }]
+        }],
+        processado:{
+            type: Boolean,
+            default: false
+        }
     }],
     processado:{
         type: Boolean,

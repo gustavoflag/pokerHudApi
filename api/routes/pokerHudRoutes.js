@@ -21,6 +21,9 @@ module.exports = function(app) {
     .get(torneioController.consultar)
     .patch(torneioController.inserirMao);
 
+  app.route('/torneio/processar')
+    .post(torneioController.processar);
+
   app.route('/mao')
     .get(usuarioController.loginRequerido, maoController.listar)
     .post(usuarioController.loginRequerido, maoController.inserir);
