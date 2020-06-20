@@ -15,6 +15,7 @@ module.exports = function(app) {
     .post(usuarioController.login);
 
   app.route('/torneio')
+    .get(torneioController.listar)
     .post(torneioController.inserir);
 
   app.route('/torneio/:idTorneio')
@@ -23,6 +24,15 @@ module.exports = function(app) {
 
   app.route('/torneio/processar')
     .post(torneioController.processar);
+
+  app.route('/torneio/processar/:idTorneio')
+    .get(torneioController.consultarStatus);
+
+  app.route('/torneio/:idTorneio/mao/:idMao')
+    .get(torneioController.consultarMao);
+
+  app.route('/torneio/:idTorneio/mao/:idMao/processar')
+    .post(torneioController.processarMao);
 
   app.route('/mao')
     .get(usuarioController.loginRequerido, maoController.listar)
@@ -45,7 +55,7 @@ module.exports = function(app) {
     .get(jogadorController.consultarTodos);
 
   app.route('/jogador/:nome')
-    .get(usuarioController.loginRequerido, jogadorController.consultar);
+    .get(jogadorController.consultar);
 
   app.route('/autocomplete/:nome')
     .get(usuarioController.loginRequerido, jogadorController.autoCompleteNome);

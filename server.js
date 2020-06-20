@@ -10,7 +10,7 @@ var express = require('express'),
   Torneio = require('./api/models/torneio');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pokerHudApi', { useNewUrlParser: true }); //LOCAL
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pokerHudApi2', { useNewUrlParser: true }); //LOCAL
 //mongoose.connect(process.env.MONGODB_URI || 'mongodb://heroku_nwr6gcbj:lij4u0eb5r67oqgqn999irmaek@ds239206.mlab.com:39206/heroku_nwr6gcbj', { useNewUrlParser: true }); //TQSOP-STATS
 
 app.use(bodyParser.urlencoded({ extended: true }));
