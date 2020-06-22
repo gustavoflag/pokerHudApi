@@ -276,3 +276,96 @@ exports.inserir = function(req, res) {
       return res.status(440).json({error: err}) ;
     });
 };
+
+//
+function processarMao(novaMao, callback) {
+  //console.log('novaMao', novaMao);
+  try{
+    var jogadoresSalvar = [];
+    novaMao.preFlop.forEach((jogadorAcao) => {
+      var jogador = jogadoresSalvar.find((jogador) => jogador == jogadorAcao.nomeJogador);
+      if (!jogador){
+        jogadoresSalvar.push(jogadorAcao.nomeJogador);
+      }
+    });
+  
+    if (jogadoresSalvar.length < 5){
+      return callback(null, `Mão com menos de 5 jogadores, não será importada`);
+    } else {
+      novaMao.save()
+        .then((item) => {
+          var jogadoresSalvar = [];
+          var jaRaise = false;
+          var agressorPreFlop = null;
+  
+          console.log('processando mão:', novaMao.idPokerstars);
+  
+          novaMao.preFlop.forEach((jogadorAcao) => {
+            var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+            if (!jogador){
+              jogador = new Jogador({
+                nome: jogadorAcao.nomeJogador
+              });
+              jogador.maos++;
+  
+              jogadoresSalvar.push(jogador);
+            }   
+  
+            var jogadorRaise = consolidaAcaoPreFlop(jogador, jogadorAcao.acao, jaRaise);
+            if (jogadorRaise){
+              agressorPreFlop = jogador;
+            }
+            jaRaise = jaRaise || jogadorRaise;
+          });
+  
+          novaMao.flop.forEach((jogadorAcao) => {
+            var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+            consolidaAcaoFlop(jogador, jogadorAcao.acao, agressorPreFlop);
+          });
+        
+          novaMao.turn.forEach((jogadorAcao) => {
+            var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+            consolidaAcaoTurn(jogador, jogadorAcao.acao);
+          });
+        
+          novaMao.river.forEach((jogadorAcao) => {
+            var jogador = jogadoresSalvar.find((jogador) => jogador.nome == jogadorAcao.nomeJogador);
+            consolidaAcaoRiver(jogador, jogadorAcao.acao);
+          });
+        
+          jogadorController.agregarDadosJogadores(jogadoresSalvar, (err, data) => {
+            if (err){
+              console.log('Erro ao processar', err);
+              return callback(err, null);
+            } else {
+              return callback(null, `Mão processada`);
+            }          
+          });
+  
+          
+        })
+        .catch((err) => {
+          return callback(err, null);
+        }); 
+    }  
+  } catch (e){
+    return callback(err, null);
+  }
+  
+};
+
+exports.inserirMao = function(mao, callback) {  
+    Mao.findOne({ idPokerstars: mao.idPokerstars })
+      .then((maoExistente) => {
+        if (maoExistente){
+          return callback(null, `Mão já existente`);
+        } else {
+          processarMao(mao, (err, msg) => {
+            return callback(err, msg);
+          });
+        }  
+      })
+      .catch((err) => { 
+        return callback(err, null);
+      });
+};

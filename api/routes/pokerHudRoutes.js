@@ -3,6 +3,7 @@ module.exports = function(app) {
   var usuarioController = require('../controllers/usuarioController.js');
   var maoController = require('../controllers/maoController.js');
   var jogadorController = require('../controllers/jogadorController.js');
+  var torneioController = require('../controllers/torneioController.js');
 
   app.route('/auth')
     .get(usuarioController.loginRequerido, usuarioController.listar);
@@ -12,6 +13,26 @@ module.exports = function(app) {
 
   app.route('/auth/login')
     .post(usuarioController.login);
+
+  app.route('/torneio')
+    .get(usuarioController.loginRequerido, torneioController.listar)
+    .post(usuarioController.loginRequerido, torneioController.inserir);
+
+  app.route('/torneio/:idTorneio')
+    .get(usuarioController.loginRequerido, torneioController.consultar)
+    .patch(usuarioController.loginRequerido, torneioController.inserirMao);
+
+  app.route('/torneio/processar')
+    .post(usuarioController.loginRequerido, torneioController.processar);
+
+  app.route('/torneio/processar/:idTorneio')
+    .get(usuarioController.loginRequerido, torneioController.consultarStatus);
+
+  app.route('/torneio/:idTorneio/mao/:idMao')
+    .get(usuarioController.loginRequerido, torneioController.consultarMao);
+
+  app.route('/torneio/:idTorneio/mao/:idMao/processar')
+    .post(usuarioController.loginRequerido, torneioController.processarMao);
 
   app.route('/mao')
     .get(usuarioController.loginRequerido, maoController.listar)
