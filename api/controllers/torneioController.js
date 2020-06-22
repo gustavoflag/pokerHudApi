@@ -34,7 +34,7 @@ exports.inserirMao = function(req, res) {
             }
 
             if (torneio.maos.find(m => m.idMao == req.body.idMao)){
-                return res.status(440).json({ error: { message: `Mão já inserida` } });
+                return res.json({ message: `Mão já inserida` });
             }
       
             torneio.maos.push(req.body);
