@@ -9,30 +9,30 @@ module.exports = function(app) {
     .get(usuarioController.loginRequerido, usuarioController.listar);
 
   app.route('/auth/cadastrar')
-    .post(usuarioController.loginRequerido, usuarioController.inserir);
+    .post(/*usuarioController.loginRequerido, */usuarioController.inserir);
 
   app.route('/auth/login')
     .post(usuarioController.login);
 
   app.route('/torneio')
-    .get(torneioController.listar)
-    .post(torneioController.inserir);
+    .get(usuarioController.loginRequerido, torneioController.listar)
+    .post(usuarioController.loginRequerido, torneioController.inserir);
 
   app.route('/torneio/:idTorneio')
-    .get(torneioController.consultar)
-    .patch(torneioController.inserirMao);
+    .get(usuarioController.loginRequerido, torneioController.consultar)
+    .patch(usuarioController.loginRequerido, torneioController.inserirMao);
 
   app.route('/torneio/processar')
-    .post(torneioController.processar);
+    .post(usuarioController.loginRequerido, torneioController.processar);
 
   app.route('/torneio/processar/:idTorneio')
-    .get(torneioController.consultarStatus);
+    .get(usuarioController.loginRequerido, torneioController.consultarStatus);
 
   app.route('/torneio/:idTorneio/mao/:idMao')
-    .get(torneioController.consultarMao);
+    .get(usuarioController.loginRequerido, torneioController.consultarMao);
 
   app.route('/torneio/:idTorneio/mao/:idMao/processar')
-    .post(torneioController.processarMao);
+    .post(usuarioController.loginRequerido, torneioController.processarMao);
 
   app.route('/mao')
     .get(usuarioController.loginRequerido, maoController.listar)
@@ -46,16 +46,16 @@ module.exports = function(app) {
     .post(usuarioController.loginRequerido, jogadorController.consultarVarios);
 
   app.route('/todosJogadores')
-    .get(jogadorController.consultarTodos);
+    .get(usuarioController.loginRequerido, jogadorController.consultarTodos);
   
   app.route('/todosJogadores/:order')
-    .get(jogadorController.consultarTodos);
+    .get(usuarioController.loginRequerido, jogadorController.consultarTodos);
 
   app.route('/todosJogadores/:order/:asc')
-    .get(jogadorController.consultarTodos);
+    .get(usuarioController.loginRequerido, jogadorController.consultarTodos);
 
   app.route('/jogador/:nome')
-    .get(jogadorController.consultar);
+    .get(usuarioController.loginRequerido, jogadorController.consultar);
 
   app.route('/autocomplete/:nome')
     .get(usuarioController.loginRequerido, jogadorController.autoCompleteNome);
