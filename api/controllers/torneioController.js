@@ -4,6 +4,7 @@ var Mao = mongoose.model('Mao');
 var Jogador = mongoose.model('Jogador');
 
 var jogadorController = require('./jogadorController');
+var maoController = require('./maoController');
 
 var torneiosPendentes = [];
 var emProcessamento = false;
@@ -320,7 +321,7 @@ function processarTorneio(torneio, callback){
 
 //
 function insereMaoSync(maos, torneio, callback){
-  inserirMao(new Mao(maos[0]), (err, mensagem) => {
+  maoController.inserirMao(new Mao(maos[0]), (err, mensagem) => {
     if (err){
       console.log(`Mão: ${maos[0].idPokerstars} - Erro: ${err}`);
     } else {
@@ -352,6 +353,7 @@ function insereMaoSync(maos, torneio, callback){
   });
 }
 
+/*
 function processarMao(novaMao, callback) {
   //console.log('novaMao', novaMao);
   try{
@@ -589,3 +591,4 @@ function consolidaAcaoRiver(jogador, acao){
     } 
   }
 }
+*/
