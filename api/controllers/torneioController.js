@@ -98,6 +98,11 @@ exports.consultarStatus = function(req, res) {
         let statusMao = { 
            idMao: mao.idMao
           ,processado: mao.processado
+          ,ganhador: mao.ganhador
+          ,summary: mao.summary
+          ,data: mao.data
+          ,pote: mao.pote
+          ,bordo: mao.bordo
         };
 
         statusTorneio.maos.push(statusMao);
