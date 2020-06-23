@@ -199,6 +199,29 @@ exports.processar = function(req, res) {
         });
 };
 
+exports.pegaInfoMaos = function(req, res) {
+  Torneio.findOne({ idTorneio: req.body.idTorneio })
+    .then((torneio) => {
+        if (!torneio){
+            return res.status(440).json({ error: { message: `Torneio não encontrado` } });
+        }
+
+        torneio.maos.forEach(mao => {
+          pegaInfoMao(mao);
+        });
+
+        torneio.save()
+          .then((torneioSalvo) => {
+            console.log(`Torneio #${torneio.idTorneio} Processado`);
+            res.json({ message: `Torneio ${torneio.idTorneio} processado` });
+          })
+          .catch((err) => console.log(`Erro ao salvar #${torneio.idTorneio}`));  
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+};
+
 function processarTorneiosPendentes(){
   let torneio = torneiosPendentes[0];
 
@@ -325,7 +348,9 @@ function insereMaoSync(maos, torneio, callback){
       console.log(`Mão: ${maos[0].idPokerstars} - Erro: ${err}`);
     } else {
       let maoTorneio = torneio.maos.find(m => "#" + m.idMao == maos[0].idPokerstars);
+      pegaInfoMao(maoTorneio);
       maoTorneio.processado = true;
+
       console.log(`Mão: ${maos[0].idPokerstars} - Sucesso: ${mensagem}`);
     }
 
@@ -348,6 +373,57 @@ function insereMaoSync(maos, torneio, callback){
         })
         .catch((err) => console.log(`Erro ao salvar #${torneio.idTorneio}`));  
       
+    }
+  });
+}
+
+function pegaInfoMao(mao){ 
+  let leitura = false;
+
+  mao.linhas.forEach(line => {
+    if (line.indexOf("Hand #") != -1){
+        var sptData = line.split("BRT [");
+        if (sptData.length > 1){
+           var strData = sptData[1].replace(" ET]", "").replace("/", "-").replace("/", "-");
+           if (strData && strData.length > 0){
+             try{
+               mao.data = new Date(strData);
+             } catch (e){
+               console.log('exception', e);
+             }
+           }
+        }
+    } else if (line.indexOf("*** SUMMARY ***") != -1){
+      leitura = true;
+      mao.summary = "";
+      mao.ganhador = "";
+      mao.bordo = "";
+    } else if (leitura) {
+      mao.summary += line + '\n';
+
+      if (line.indexOf("Total pot") != -1){
+        sptPote = line.split("|");
+        if (sptPote && sptPote.length > 0){
+          mao.pote = sptPote[0].replace("Total pot ", "").replace(" ", "");
+        }
+      } else if (line.indexOf("Board") != -1){
+        mao.bordo = line.replace("Board [", "").replace("]", "");
+      } else if (line.indexOf("won") != -1 
+                 || line.indexOf("collected") != -1){
+
+        var sptLine = line.split(':');
+        if (sptLine && sptLine.length > 1){
+          var jogAcao = sptLine[1].trim();
+          var sptJogAcao = jogAcao.split(" ");
+          if (sptJogAcao && sptJogAcao.length > 0){
+            if (mao.ganhador.length > 0){
+              mao.ganhador += " / ";
+            }
+            mao.ganhador += sptJogAcao[0].trim();
+          }
+        }
+        
+      }
     }
   });
 }

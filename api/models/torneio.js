@@ -25,6 +25,21 @@ var TorneioSchema = new Schema({
         processado:{
             type: Boolean,
             default: false
+        },
+        ganhador:{
+            type: String
+        },
+        bordo:{
+            type: String
+        },
+        pote:{
+            type: String
+        },
+        summary:{
+            type: String
+        },
+        data:{
+            type: Date
         }
     }],
     processado:{

@@ -15,7 +15,7 @@ module.exports = function(app) {
     .post(usuarioController.login);
 
   app.route('/torneio')
-    .get(usuarioController.loginRequerido, torneioController.listar)
+    .get(torneioController.listar)
     .post(usuarioController.loginRequerido, torneioController.inserir);
 
   app.route('/torneio/:idTorneio')
@@ -24,6 +24,9 @@ module.exports = function(app) {
 
   app.route('/torneio/processar')
     .post(usuarioController.loginRequerido, torneioController.processar);
+
+  app.route('/torneio/infomaos')
+    .post(torneioController.pegaInfoMaos);
 
   app.route('/torneio/processar/:idTorneio')
     .get(usuarioController.loginRequerido, torneioController.consultarStatus);
