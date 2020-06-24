@@ -93,6 +93,10 @@ exports.consultarStatus = function(req, res) {
         ,processado: torneio.processado
         ,maos: []
       }
+
+      if (torneio.maos && torneio.maos.length > 0){
+        statusTorneio.data = torneio.maos[0].data;
+      }
   
       torneio.maos.forEach(mao => {
         let statusMao = { 
