@@ -70,10 +70,17 @@ exports.listar = function(req, res) {
       let retorno = [];
       
       torneios.forEach(torn => {
-        retorno.push({
+        let torneioRetorno = {
           idTorneio: torn.idTorneio,
-          processado: torn.processado
-        })
+          processado: torn.processado,
+          data: undefined
+        };
+
+        if (torn.maos && torn.maos.length > 0){
+          torneioRetorno.data = torn.maos[0].data;
+        }
+
+        retorno.push(torneioRetorno);        
       });
 
       return res.json(retorno);
