@@ -129,7 +129,7 @@ exports.consultarMao = function(req, res) {
     .catch((err) => {
         res.status(440).json({error: err})
     });
-}
+};
 
 exports.processarMao = function(req, res) {
   Torneio.findOne({ idTorneio: req.params.idTorneio })
@@ -172,7 +172,7 @@ exports.processarMao = function(req, res) {
   .catch((err) => {
     res.status(440).json({error: err})
   });    
-}
+};
 
 const streets = {
     PRE_FLOP: 0,
@@ -217,7 +217,6 @@ exports.pegaInfoMaos = function(req, res) {
 
         torneio.save()
           .then((torneioSalvo) => {
-            console.log(`Torneio #${torneio.idTorneio} Processado`);
             res.json({ message: `Torneio ${torneio.idTorneio} processado` });
           })
           .catch((err) => console.log(`Erro ao salvar #${torneio.idTorneio}`));  
@@ -226,6 +225,27 @@ exports.pegaInfoMaos = function(req, res) {
         console.log(err);
     });
 };
+
+exports.exportarTodasMaos = function(req, res) {
+  Torneio.findOne({ idTorneio: req.body.idTorneio })
+    .then((torneio) => {
+        if (!torneio){
+            return res.status(440).json({ error: { message: `Torneio não encontrado` } });
+        }
+
+        let linhasTorneio = [];
+             
+        torneio.maos.forEach(mao => {
+         linhasTorneio = linhasTorneio.concat(mao.linhas);
+         linhasTorneio.push("\n");
+       });
+ 
+       return res.json(linhasTorneio);
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+}
 
 function processarTorneiosPendentes(){
   let torneio = torneiosPendentes[0];

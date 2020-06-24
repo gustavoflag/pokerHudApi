@@ -26,10 +26,13 @@ module.exports = function(app) {
     .post(usuarioController.loginRequerido, torneioController.processar);
 
   app.route('/torneio/infomaos')
-    .post(torneioController.pegaInfoMaos);
+    .post(usuarioController.loginRequerido, torneioController.pegaInfoMaos);
 
   app.route('/torneio/processar/:idTorneio')
     .get(usuarioController.loginRequerido, torneioController.consultarStatus);
+  
+  app.route('/torneio/exportarMaos/:idTorneio')
+    .get(torneioController.exportarTodasMaos);
 
   app.route('/torneio/:idTorneio/mao/:idMao')
     .get(usuarioController.loginRequerido, torneioController.consultarMao);
