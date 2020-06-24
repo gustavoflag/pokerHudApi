@@ -227,7 +227,7 @@ exports.pegaInfoMaos = function(req, res) {
 };
 
 exports.exportarTodasMaos = function(req, res) {
-  Torneio.findOne({ idTorneio: req.body.idTorneio })
+  Torneio.findOne({ idTorneio: req.params.idTorneio })
     .then((torneio) => {
         if (!torneio){
             return res.status(440).json({ error: { message: `Torneio não encontrado` } });
