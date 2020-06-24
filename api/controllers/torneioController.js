@@ -213,6 +213,10 @@ exports.pegaInfoMaos = function(req, res) {
 
         torneio.maos.forEach(mao => {
           pegaInfoMao(mao);
+        });    
+
+        torneio.maos.sort(function(a, b){
+          return a.data - b.data;
         });
 
         torneio.save()
@@ -390,7 +394,11 @@ function insereMaoSync(maos, torneio, callback){
         torneio.processado = false;  
       } else {
         torneio.processado = true;
-      }     
+      }
+
+      torneio.maos.sort(function(a, b){
+        return a.data - b.data;
+      });
 
       torneio.save()
         .then((torneioSalvo) => {
