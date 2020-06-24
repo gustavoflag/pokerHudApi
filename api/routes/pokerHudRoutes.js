@@ -26,7 +26,7 @@ module.exports = function(app) {
     .post(usuarioController.loginRequerido, torneioController.processar);
 
   app.route('/torneio/infomaos')
-    .post(usuarioController.loginRequerido, torneioController.pegaInfoMaos);
+    .post(torneioController.pegaInfoMaos);
 
   app.route('/torneio/processar/:idTorneio')
     .get(usuarioController.loginRequerido, torneioController.consultarStatus);

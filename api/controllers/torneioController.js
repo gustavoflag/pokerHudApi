@@ -434,6 +434,7 @@ function pegaInfoMao(mao){
            if (strData && strData.length > 0){
              try{
                mao.data = new Date(strData);
+               mao.data.setHours(mao.data.getHours() - 2);
              } catch (e){
                console.log('exception', e);
              }
