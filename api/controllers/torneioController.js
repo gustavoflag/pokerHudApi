@@ -237,7 +237,8 @@ exports.exportarTodasMaos = function(req, res) {
              
         torneio.maos.forEach(mao => {
          linhasTorneio = linhasTorneio.concat(mao.linhas);
-         linhasTorneio.push("\n");
+         linhasTorneio.push("");
+         linhasTorneio.push("");
        });
  
        return res.json(linhasTorneio);
