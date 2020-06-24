@@ -91,6 +91,7 @@ exports.consultarStatus = function(req, res) {
       let statusTorneio = {
          idTorneio: torneio.idTorneio
         ,processado: torneio.processado
+        ,data: undefined
         ,maos: []
       }
 
