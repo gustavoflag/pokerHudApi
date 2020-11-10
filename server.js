@@ -11,7 +11,7 @@ var express = require('express'),
 
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pokerHudApi2', { useNewUrlParser: true }); //LOCAL
-//mongoose.connect(process.env.MONGODB_URI || 'mongodb://heroku_nwr6gcbj:lij4u0eb5r67oqgqn999irmaek@ds239206.mlab.com:39206/heroku_nwr6gcbj', { useNewUrlParser: true }); //TQSOP-STATS
+//mongoose.connect(process.env.MONGODB_URI || 'mongodb://heroku_nwr6gcbj:lij4u0eb5r67oqgqn999irmaek@cluster-nwr6gcbj-shard-00-00.azfzd.mongodb.net:27017,cluster-nwr6gcbj-shard-00-01.azfzd.mongodb.net:27017,cluster-nwr6gcbj-shard-00-02.azfzd.mongodb.net:27017/heroku_nwr6gcbj?ssl=true&replicaSet=atlas-mxzc3a-shard-0&authSource=admin&retryWrites=true&w=majority', { useNewUrlParser: true }); //TQSOP-STATS
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
